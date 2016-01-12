@@ -80,13 +80,28 @@ void NBody_tick(NBody* self, uint32_t dt) {
 
 
 void NBody_draw_star(NBody* self, Star star) {
-    glBegin(GL_POINTS);
-        glVertex3f(star.position.x, star.position.y, star.position.z);
-    glEnd();
+    glPushMatrix();
+        glColor4f(1.0f, 1.0f, 1.0f, 0.6f);
+        glTranslatef(star.position.x, star.position.y, star.position.z);
+
+        float scale = 0.02f * (float) sqrt((double) star.mass);
+        glScalef(scale, scale, scale);
+
+        glBegin(GL_QUADS);
+            glVertex3f(-1.0f, -1.0f, 1.0f);
+            glVertex3f( 1.0f, -1.0f, 1.0f);
+            glVertex3f( 1.0f,  1.0f, 1.0f);
+            glVertex3f(-1.0f,  1.0f, 1.0f);
+        glEnd();
+    glPopMatrix();
 }
 
 
 void NBody_draw_stars(NBody* self) {
+    // Turn on alpha blending for transparency
+    glEnable(GL_BLEND);     // Turn Blending On
+    glDisable(GL_DEPTH_TEST);   // Turn Depth Testing Off
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     for (size_t i = 0; i < NUM_STARS; ++i) {
         NBody_draw_star(self, self->stars[i]);
@@ -97,6 +112,13 @@ void NBody_draw_stars(NBody* self) {
 void NBody_draw(NBody* self) {
     // Clear The Screen And The Depth Buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Reset matrix
+    glLoadIdentity();
+
+    // Zoom out a little
+    float scale = 0.5f;
+    glScalef(scale, scale, scale);
 
     NBody_draw_stars(self);
     Window_update(self->window);
@@ -115,10 +137,6 @@ void NBody_run(NBody* self) {
 
     self->running = true;
     uint32_t lastTicks = SDL_GetTicks();
-
-    // Zoom out a little
-    float scale = 0.5f;
-    glScalef(scale, scale, scale);
 
     while (self->running) {
         uint32_t currentTicks = SDL_GetTicks();
