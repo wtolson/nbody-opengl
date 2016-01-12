@@ -108,11 +108,13 @@ void NBody_tick(NBody* self, uint32_t dt) {
 void NBody_draw_star(NBody* self, Star star) {
     // Set stars color
     if (star.mass < 0.5) {
-        float lum = 2.0 * star.mass;
-        glColor4f(1.0f, lum, lum, 1.0f);
+        float lum = star.mass + 0.5;
+        float lum_2 = lum * lum;
+        glColor4f(lum, lum_2, lum_2, 1.0f);
     } else {
-        float lum = 2.0 * (1.0 - star.mass);
-        glColor4f(lum, lum, 1.0f, 1.0f);
+        float lum = (1.0 - star.mass) + 0.5;
+        float lum_2 = lum * lum;
+        glColor4f(lum_2, lum_2, lum, 1.0f);
     }
 
     glPushMatrix();
