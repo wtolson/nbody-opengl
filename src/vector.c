@@ -40,7 +40,7 @@ Vector Vector_scale(Vector self, float factor) {
 
 
 float Vector_dot(Vector a, Vector b) {
-    return (a.x * b.x) + (a.y * b.y) + (a.z + b.z);
+    return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
 }
 
 
