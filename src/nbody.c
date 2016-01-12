@@ -66,7 +66,7 @@ void NBody_tick(NBody* self, uint32_t dt) {
             Star* star_j = &self->stars[j];
 
             Vector delta = Vector_subtract(star_j->position, star_i->position);
-            float distance = Vector_mag(delta) + 0.00001;
+            float distance = Vector_mag(delta) + 0.00001;  // Add small amount to avoid collision
 
             Vector force = Vector_scale(delta, 0.001 / (distance * distance * distance));
             accelerations[i] = Vector_add(accelerations[i], Vector_scale(force, star_j->mass));
