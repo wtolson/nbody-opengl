@@ -194,5 +194,5 @@ void NBody_run(NBody* self) {
         SDL_Delay(16);
     }
 
-    log_info("Shutting down..");
+    log_info("Shutting down.");
 }
