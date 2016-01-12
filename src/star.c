@@ -6,11 +6,12 @@ float randomFloat() {
     return ((float) rand()) / ((float) RAND_MAX);
 }
 
+
 Vector randomVector() {
     return Vector_init(
-        randomFloat(),
-        randomFloat(),
-        randomFloat()
+        (2.0 * randomFloat()) - 1.0,
+        (2.0 * randomFloat()) - 1.0,
+        (2.0 * randomFloat()) - 1.0
     );
 }
 
