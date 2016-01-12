@@ -164,6 +164,20 @@ void NBody_draw(NBody* self) {
     // Reset matrix
     glLoadIdentity();
 
+    double width = 1.0;
+    double height = width * WINDOW_HEIGHT / WINDOW_WIDTH;
+    double depth = 100.0;
+
+    // Set the perspective
+    glOrtho(
+        -width,   // left
+        width,    // right
+        -height,  // bottom
+        height,   // top
+        -depth,   // nearVal
+        depth     // farVal
+    );
+
     // Zoom out a little
     float scale = 0.5f;
     glScalef(scale, scale, scale);
