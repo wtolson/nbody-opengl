@@ -2,6 +2,37 @@
 #include "window.h"
 
 
+bool init_opengl() {
+    // Initialize Projection Matrix
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    // Check for error
+    if(glGetError() != GL_NO_ERROR) {
+        return false;
+    }
+
+    //Initialize Modelview Matrix
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // Check for error
+    if(glGetError() != GL_NO_ERROR) {
+        return false;
+    }
+
+    // Initialize clear color
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+
+    // Check for error
+    if(glGetError() != GL_NO_ERROR) {
+        return false;
+    }
+
+    return true;
+}
+
+
 Window* Window_new() {
     Window* self = malloc(sizeof(Window));
     memset(self, 0, sizeof(Window));
@@ -12,13 +43,17 @@ Window* Window_new() {
         return NULL;
     }
 
+    // Use OpenGL 2.1
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+
     self->window = SDL_CreateWindow(
-        "NBody",                  // title
-        SDL_WINDOWPOS_UNDEFINED,  // x
-        SDL_WINDOWPOS_UNDEFINED,  // y
-        WINDOW_WIDTH,             // w
-        WINDOW_HEIGHT,            // h
-        SDL_WINDOW_SHOWN          // flags
+        "NBody",                              // title
+        SDL_WINDOWPOS_UNDEFINED,              // x
+        SDL_WINDOWPOS_UNDEFINED,              // y
+        WINDOW_WIDTH,                         // w
+        WINDOW_HEIGHT,                        // h
+        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN  // flags
     );
 
     if (self->window == NULL) {
@@ -26,40 +61,18 @@ Window* Window_new() {
         goto error;
     }
 
-    self->renderer = SDL_CreateRenderer(
-        self->window,                                         // window
-        -1,                                                   // index
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC  // flags
-    );
-
-    if(self->renderer == NULL) {
-        printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
+    self->context = SDL_GL_CreateContext(self->window);
+    if(self->context == NULL) {
+        log_error("OpenGL context could not be created! SDL_Error: %s", SDL_GetError());
         goto error;
     }
 
-    self->surface = SDL_CreateRGBSurface(
-        0,              // flags
-        WINDOW_WIDTH,   // width
-        WINDOW_HEIGHT,  // height
-        32,             // depth
-        0,              // Rmask
-        0,              // Gmask
-        0,              // Bmask
-        0               // Amask
-    );
-
-    if(self->surface == NULL) {
-        printf("Surface could not be created! SDL_Error: %s\n", SDL_GetError());
-        goto error;
+    if (SDL_GL_SetSwapInterval(1) < 0) {
+        log_warn("Unable to set VSync! SDL Error: %s", SDL_GetError());
     }
 
-    self->texture = SDL_CreateTextureFromSurface(
-        self->renderer,
-        self->surface
-    );
-
-    if(self->texture == NULL) {
-        printf("Texture could not be created! SDL_Error: %s\n", SDL_GetError());
+    if (!init_opengl()) {
+        log_error("Unable to initialize OpenGL!");
         goto error;
     }
 
@@ -76,19 +89,9 @@ void Window_destroy(Window* self) {
         return;
     }
 
-    if (self->texture != NULL) {
-        SDL_DestroyTexture(self->texture);
-        self->texture = NULL;
-    }
-
-    if (self->surface != NULL) {
-        SDL_FreeSurface(self->surface);
-        self->surface = NULL;
-    }
-
-    if (self->renderer != NULL) {
-        SDL_DestroyRenderer(self->renderer);
-        self->renderer = NULL;
+    if (self->context != NULL) {
+        SDL_GL_DeleteContext(self->context);
+        self->context = NULL;
     }
 
     if (self->window != NULL) {
@@ -100,14 +103,7 @@ void Window_destroy(Window* self) {
     free(self);
 }
 
-
-void Window_fill(Window* self, uint32_t color) {
-    SDL_FillRect(self->surface, NULL, color);
-}
-
-
-void Window_render(Window* self) {
-    SDL_UpdateTexture(self->texture, NULL, self->surface->pixels, self->surface->pitch);
-    SDL_RenderCopy(self->renderer, self->texture, NULL, NULL);
-    SDL_RenderPresent(self->renderer);
+void Window_update(Window* self) {
+    //Update screen
+    SDL_GL_SwapWindow(self->window);
 }

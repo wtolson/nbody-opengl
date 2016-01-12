@@ -3,7 +3,9 @@
 
 
 #include <stdbool.h>
+
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 
 #define WINDOW_WIDTH 640
@@ -12,15 +14,12 @@
 
 typedef struct {
     SDL_Window* window;
-    SDL_Renderer* renderer;
-    SDL_Surface* surface;
-    SDL_Texture* texture;
+    SDL_GLContext context;
 } Window;
 
 
 Window* Window_new();
 void Window_destroy(Window* self);
-void Window_fill(Window* self, uint32_t color);
-void Window_render(Window* self);
+void Window_update(Window* self);
 
 #endif

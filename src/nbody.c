@@ -79,26 +79,27 @@ void NBody_tick(NBody* self, uint32_t dt) {
 }
 
 
+void NBody_draw_star(NBody* self, Star star) {
+    glBegin(GL_POINTS);
+        glVertex3f(star.position.x, star.position.y, star.position.z);
+    glEnd();
+}
+
+
 void NBody_draw_stars(NBody* self) {
-    SDL_Rect rect;
-    uint32_t color = SDL_MapRGB(self->window->surface->format, 0xFF, 0xFF, 0xFF);
 
     for (size_t i = 0; i < NUM_STARS; ++i) {
-        Star star = self->stars[i];
-        Vector position = Vector_scale(star.position, WINDOW_WIDTH);
-        rect.x = (int) position.x;
-        rect.y = (int) position.y;
-        rect.w = 1;
-        rect.h = 1;
-        SDL_FillRect(self->window->surface, &rect, color);
+        NBody_draw_star(self, self->stars[i]);
     }
 }
 
 
 void NBody_draw(NBody* self) {
-    Window_fill(self->window, 0);
+    // Clear The Screen And The Depth Buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     NBody_draw_stars(self);
-    Window_render(self->window);
+    Window_update(self->window);
 }
 
 
@@ -114,6 +115,11 @@ void NBody_run(NBody* self) {
 
     self->running = true;
     uint32_t lastTicks = SDL_GetTicks();
+
+    // Zoom out a little
+    float scale = 0.5f;
+    glScalef(scale, scale, scale);
+
     while (self->running) {
         uint32_t currentTicks = SDL_GetTicks();
         NBody_step(self, currentTicks - lastTicks);
