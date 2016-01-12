@@ -84,7 +84,7 @@ void NBody_draw_star(NBody* self, Star star) {
         glColor4f(1.0f, 1.0f, 1.0f, 0.6f);
         glTranslatef(star.position.x, star.position.y, star.position.z);
 
-        float scale = 0.02f * (float) sqrt((double) star.mass);
+        float scale = 0.02f * sqrtf(star.mass);
         glScalef(scale, scale, scale);
 
         glBegin(GL_QUADS);

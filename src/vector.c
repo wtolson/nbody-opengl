@@ -45,5 +45,5 @@ float Vector_dot(Vector a, Vector b) {
 
 
 float Vector_mag(Vector self) {
-    return (float) sqrt((double) Vector_dot(self, self));
+    return sqrtf(Vector_dot(self, self));
 }
