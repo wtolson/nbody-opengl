@@ -1,20 +1,24 @@
 CC=clang
 
-SRC = $(wildcard src/*.c)
-OBJ = $(SRC:.c=.o)
+HEADERS = $(wildcard src/*.h)
+SOURCES = $(wildcard src/*.c)
+OBJECTS = $(SOURCES:.c=.o)
 
 CFLAGS = -std=gnu99 -Wall -Werror -Wno-unused -g
-LFLAGS = -lSDL2 -lSDL2_mixer -lSDL2_net -g
+LFLAGS = -lSDL2 -framework OpenGL -g
 
 
-nbody: $(OBJ)
-	$(CC) $(OBJ) $(LFLAGS) -o nbody
+nbody: $(OBJECTS)
+	$(CC) $(OBJECTS) $(LFLAGS) -o nbody
+
+$(OBJECTS): $(HEADERS)
 
 valgrind: nbody
 	valgrind ./nbody
 
 clean:
-	rm -f $(OBJ)
+	rm -rf *.dSYM
+	rm -f $(OBJECTS)
 	rm -f nbody
 
 
