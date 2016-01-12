@@ -1,13 +1,10 @@
-#ifndef _nbody_h
-#define _nbody_h
-
+#pragma once
 
 #include <stdbool.h>
 #include "window.h"
 #include "star.h"
 
 #define NUM_STARS 512
-
 
 typedef struct {
     Window* window;
@@ -16,10 +13,6 @@ typedef struct {
     GLuint star_texture;
 } NBody;
 
-
 NBody* NBody_new(void);
 void NBody_run(NBody* self);
 void NBody_destroy(NBody* self);
-
-
-#endif

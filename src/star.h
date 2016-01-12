@@ -1,6 +1,4 @@
-#ifndef _nbody_star_h
-#define _nbody_star_h
-
+#pragma once
 
 #include "vector.h"
 
@@ -12,8 +10,5 @@ typedef struct {
     Vector velocity;
 } Star;
 
-
 Star Star_random(void);
 float* load_star_texture(void);
-
-#endif

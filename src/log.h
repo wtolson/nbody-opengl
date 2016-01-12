@@ -1,9 +1,6 @@
-#ifndef _nbody_log_h
-#define _nbody_log_h
-
+#pragma once
 
 #include <stdio.h>
-
 
 #ifdef NDEBUG
 #define log_debug(M, ...)
@@ -14,6 +11,3 @@
 #define log_info(M, ...) fprintf(stderr, "[INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #define log_warn(M, ...) fprintf(stderr, "[WARN] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #define log_error(M, ...) fprintf(stderr, "[ERROR] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
-
-
-#endif
