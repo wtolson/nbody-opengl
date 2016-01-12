@@ -18,7 +18,7 @@ typedef struct {
 } Window;
 
 
-Window* Window_new();
+Window* Window_new(void);
 void Window_destroy(Window* self);
 void Window_update(Window* self);
 

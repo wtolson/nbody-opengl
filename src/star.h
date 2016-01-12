@@ -13,7 +13,7 @@ typedef struct {
 } Star;
 
 
-Star Star_random();
-float* load_star_texture();
+Star Star_random(void);
+float* load_star_texture(void);
 
 #endif

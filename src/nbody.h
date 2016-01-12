@@ -17,7 +17,7 @@ typedef struct {
 } NBody;
 
 
-NBody* NBody_new();
+NBody* NBody_new(void);
 void NBody_run(NBody* self);
 void NBody_destroy(NBody* self);
 
