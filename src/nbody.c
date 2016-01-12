@@ -52,7 +52,20 @@ error:
 
 
 void NBody_destroy(NBody* self) {
-    Window_destroy(self->window);
+    if (self == NULL) {
+        return;
+    }
+
+    if (self->window != NULL) {
+        Window_destroy(self->window);
+        self->window = NULL;
+    }
+
+    if (self->star_texture != 0) {
+        glDeleteTextures(1, &self->star_texture);
+        self->star_texture = 0;
+    }
+
     free(self);
 }
 
