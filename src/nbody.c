@@ -6,8 +6,7 @@
 
 
 NBody* NBody_new() {
-    NBody* self = malloc(sizeof(NBody));
-    self->running = false;
+    NBody* self = calloc(1, sizeof(NBody));
 
     self->window = Window_new();
     if (self->window == NULL) {

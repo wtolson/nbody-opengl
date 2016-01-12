@@ -34,8 +34,7 @@ bool init_opengl() {
 
 
 Window* Window_new() {
-    Window* self = malloc(sizeof(Window));
-    memset(self, 0, sizeof(Window));
+    Window* self = calloc(1, sizeof(Window));
 
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {

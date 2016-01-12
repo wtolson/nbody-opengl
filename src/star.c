@@ -28,7 +28,7 @@ Star Star_random() {
 
 
 float* load_star_texture() {
-    float* texture = malloc(STAR_TEXTURE_SIZE * STAR_TEXTURE_SIZE * sizeof(float));
+    float* texture = calloc(STAR_TEXTURE_SIZE * STAR_TEXTURE_SIZE, sizeof(float));
     float radius = ((float) STAR_TEXTURE_SIZE) / 2.0f;
     float sigma_2 = 8.0f;
 
