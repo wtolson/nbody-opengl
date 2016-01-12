@@ -6,7 +6,7 @@
 #include "window.h"
 #include "star.h"
 
-#define NUM_STARS 64
+#define NUM_STARS 512
 
 
 typedef struct {
