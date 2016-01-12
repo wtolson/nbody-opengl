@@ -92,27 +92,27 @@ void NBody_tick(NBody* self, uint32_t dt) {
             Star* star_j = &self->stars[j];
 
             Vector delta = Vector_subtract(star_j->position, star_i->position);
-            float distance = Vector_mag(delta) + 0.00001;  // Add small amount to avoid collision
+            float distance = Vector_mag(delta) + 0.00001f;  // Add small amount to avoid collision
 
-            Vector force = Vector_scale(delta, 0.001 / (distance * distance * distance));
+            Vector force = Vector_scale(delta, 0.001f / (distance * distance * distance));
             accelerations[i] = Vector_add(accelerations[i], Vector_scale(force, star_j->mass));
             accelerations[j] = Vector_add(accelerations[j], Vector_scale(force, -star_i->mass));
         }
 
-        star_i->velocity = Vector_add(star_i->velocity, Vector_scale(accelerations[i], 0.001 * dt));
-        star_i->position = Vector_add(star_i->position, Vector_scale(star_i->velocity, 0.001 * dt));
+        star_i->velocity = Vector_add(star_i->velocity, Vector_scale(accelerations[i], 0.001f * dt));
+        star_i->position = Vector_add(star_i->position, Vector_scale(star_i->velocity, 0.001f * dt));
     }
 }
 
 
 void NBody_draw_star(NBody* self, Star star) {
     // Set stars color
-    if (star.mass < 0.5) {
-        float lum = star.mass + 0.5;
+    if (star.mass < 0.5f) {
+        float lum = star.mass + 0.5f;
         float lum_2 = lum * lum;
         glColor4f(lum, lum_2, lum_2, 1.0f);
     } else {
-        float lum = (1.0 - star.mass) + 0.5;
+        float lum = (1.0f - star.mass) + 0.5f;
         float lum_2 = lum * lum;
         glColor4f(lum_2, lum_2, lum, 1.0f);
     }

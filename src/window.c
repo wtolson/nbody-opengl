@@ -22,7 +22,7 @@ bool init_opengl() {
     }
 
     // Initialize clear color
-    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     // Check for error
     if(glGetError() != GL_NO_ERROR) {
