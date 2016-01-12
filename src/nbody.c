@@ -106,12 +106,21 @@ void NBody_tick(NBody* self, uint32_t dt) {
 
 
 void NBody_draw_star(NBody* self, Star star) {
+    // Set stars color
+    if (star.mass < 0.5) {
+        float lum = 2.0 * star.mass;
+        glColor4f(1.0f, lum, lum, 1.0f);
+    } else {
+        float lum = 2.0 * (1.0 - star.mass);
+        glColor4f(lum, lum, 1.0f, 1.0f);
+    }
+
     glPushMatrix();
         // Translate to star's center
         glTranslatef(star.position.x, star.position.y, star.position.z);
 
         // Scale star by mass
-        float scale = 0.02f * sqrtf(star.mass);
+        float scale = 0.08f * sqrtf(star.mass);
         glScalef(scale, scale, scale);
 
         glBegin(GL_QUADS);
@@ -126,7 +135,6 @@ void NBody_draw_star(NBody* self, Star star) {
 
 void NBody_draw_stars(NBody* self) {
     // Select Our Texture
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glBindTexture(GL_TEXTURE_2D, self->star_texture);
 
     for (size_t i = 0; i < NUM_STARS; ++i) {
