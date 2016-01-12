@@ -83,7 +83,7 @@ void NBody_handle_events(NBody* self) {
 
 
 void NBody_tick(NBody* self, uint32_t dt) {
-    Vector accelerations[NUM_STARS] = {{0.0f}};
+    Vector accelerations[NUM_STARS] = {{0.0f, 0.0f, 0.0f}};
 
     for (size_t i = 0; i < NUM_STARS; ++i) {
         Star* star_i = &self->stars[i];
