@@ -1,3 +1,4 @@
+#include "log.h"
 #include "window.h"
 
 
@@ -7,7 +8,7 @@ Window* Window_new() {
 
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+        log_error("SDL could not initialize! SDL_Error: %s", SDL_GetError());
         return NULL;
     }
 
@@ -21,7 +22,7 @@ Window* Window_new() {
     );
 
     if (self->window == NULL) {
-        printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+        log_error("Window could not be created! SDL_Error: %s", SDL_GetError());
         goto error;
     }
 

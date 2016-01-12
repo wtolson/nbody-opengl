@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 
+#include "log.h"
 #include "nbody.h"
 
 
@@ -84,12 +85,12 @@ void NBody_step(NBody* self) {
 
 
 void NBody_run(NBody* self) {
-    printf("Running nbody...\n");
+    log_info("Running nbody...");
 
     self->running = true;
     while (self->running) {
         NBody_step(self);
     }
 
-    printf("Shutting down.\n");
+    log_info("Shutting down..");
 }

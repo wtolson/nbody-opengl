@@ -1,6 +1,7 @@
 #ifndef _nbody_vector_h
 #define _nbody_vector_h
 
+#define log_vector(M, v, ...) printf(M "<%f %f %f>\n", ##__VA_ARGS__, v.x, v.y, v.z);
 
 typedef struct {
     float x;
