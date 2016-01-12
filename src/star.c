@@ -16,12 +16,11 @@ Vector randomVector() {
 }
 
 
-
 Star Star_random() {
     Star result = {
         .mass = randomFloat(),
         .position = randomVector(),
-        .velocity = randomVector(),
+        .velocity = Vector_scale(randomVector(), 0.2),
     };
     return result;
 }
