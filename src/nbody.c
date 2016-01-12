@@ -7,7 +7,7 @@
 
 NBody* NBody_new() {
     NBody* self = malloc(sizeof(NBody));
-    memset(self, 0, sizeof(NBody));
+    self->running = false;
 
     self->window = Window_new();
     if (self->window == NULL) {
@@ -32,13 +32,7 @@ void NBody_destroy(NBody* self) {
 }
 
 
-void NBody_handle_events(NBody* self) {
-    SDL_Event event;
-
-    if (!SDL_PollEvent(&event)) {
-        return;
-    }
-
+void NBody_handle_event(NBody* self, SDL_Event event) {
     if(event.type == SDL_QUIT) {
         self->running = false;
         return;
@@ -50,6 +44,14 @@ void NBody_handle_events(NBody* self) {
             default: break;
         }
         return;
+    }
+}
+
+
+void NBody_handle_events(NBody* self) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        NBody_handle_event(self, event);
     }
 }
 
