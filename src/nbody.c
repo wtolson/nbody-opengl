@@ -14,6 +14,32 @@ NBody* NBody_new() {
         goto error;
     }
 
+    // Turn on alpha blending for transparency
+    glEnable(GL_BLEND);  // Turn Blending On
+    glEnable(GL_TEXTURE_2D);  // Turn on textures
+    glDisable(GL_DEPTH_TEST);  // Turn Depth Testing Off
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    // Load up star texture
+    glGenTextures(1, &self->star_texture);
+    glBindTexture(GL_TEXTURE_2D, self->star_texture);
+
+    float* pixels = load_star_texture();
+    glTexImage2D(
+        GL_TEXTURE_2D,      // target
+        0,                  // level
+        GL_ALPHA,           // internalFormat
+        STAR_TEXTURE_SIZE,  // width
+        STAR_TEXTURE_SIZE,  // height
+        0,                  // border
+        GL_ALPHA,           // format
+        GL_FLOAT,           // type
+        pixels              // data
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    free(pixels);
+
     for (size_t i = 0; i < NUM_STARS; ++i) {
         self->stars[i] = Star_random();
     }
@@ -81,27 +107,27 @@ void NBody_tick(NBody* self, uint32_t dt) {
 
 void NBody_draw_star(NBody* self, Star star) {
     glPushMatrix();
-        glColor4f(1.0f, 1.0f, 1.0f, 0.6f);
+        // Translate to star's center
         glTranslatef(star.position.x, star.position.y, star.position.z);
 
+        // Scale star by mass
         float scale = 0.02f * sqrtf(star.mass);
         glScalef(scale, scale, scale);
 
         glBegin(GL_QUADS);
-            glVertex3f(-1.0f, -1.0f, 1.0f);
-            glVertex3f( 1.0f, -1.0f, 1.0f);
-            glVertex3f( 1.0f,  1.0f, 1.0f);
-            glVertex3f(-1.0f,  1.0f, 1.0f);
+            glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
+            glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, -1.0f, 1.0f);
+            glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,  1.0f, 1.0f);
+            glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,  1.0f, 1.0f);
         glEnd();
     glPopMatrix();
 }
 
 
 void NBody_draw_stars(NBody* self) {
-    // Turn on alpha blending for transparency
-    glEnable(GL_BLEND);     // Turn Blending On
-    glDisable(GL_DEPTH_TEST);   // Turn Depth Testing Off
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    // Select Our Texture
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glBindTexture(GL_TEXTURE_2D, self->star_texture);
 
     for (size_t i = 0; i < NUM_STARS; ++i) {
         NBody_draw_star(self, self->stars[i]);

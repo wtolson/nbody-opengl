@@ -13,6 +13,7 @@ typedef struct {
     Window* window;
     bool running;
     Star stars[NUM_STARS];
+    GLuint star_texture;
 } NBody;
 
 

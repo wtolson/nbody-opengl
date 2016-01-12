@@ -4,6 +4,7 @@
 
 #include "vector.h"
 
+#define STAR_TEXTURE_SIZE 16
 
 typedef struct {
     float mass;
@@ -13,6 +14,6 @@ typedef struct {
 
 
 Star Star_random();
-
+float* load_star_texture();
 
 #endif
