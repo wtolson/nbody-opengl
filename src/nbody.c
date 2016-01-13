@@ -13,6 +13,9 @@ NBody* NBody_new() {
         goto error;
     }
 
+    self->camera = Camera_new();
+    Camera_translate(self->camera, 0.0f, 0.0f, 10.0f);
+
     // Turn on alpha blending for transparency
     glEnable(GL_BLEND);  // Turn Blending On
     glEnable(GL_TEXTURE_2D);  // Turn on textures
@@ -56,14 +59,19 @@ void NBody_destroy(NBody* self) {
         return;
     }
 
-    if (self->window != NULL) {
-        Window_destroy(self->window);
-        self->window = NULL;
-    }
-
     if (self->star_texture != 0) {
         glDeleteTextures(1, &self->star_texture);
         self->star_texture = 0;
+    }
+
+    if (self->camera != NULL) {
+        Camera_destroy(self->camera);
+        self->camera = NULL;
+    }
+
+    if (self->window != NULL) {
+        Window_destroy(self->window);
+        self->window = NULL;
     }
 
     free(self);
@@ -87,6 +95,8 @@ void NBody_handle_event(NBody* self, SDL_Event event) {
 
 
 void NBody_handle_events(NBody* self) {
+    Camera_translate(self->camera, 0.0f, 0.0f, -0.01f);
+
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         NBody_handle_event(self, event);
@@ -157,30 +167,28 @@ void NBody_draw_stars(NBody* self) {
 }
 
 
+void loadPerspective(float fovyInDegrees, float znear, float zfar) {
+    float ymax = znear * tanf(fovyInDegrees * M_PI / 360.0f);
+    float xmax = ymax * (float) WINDOW_HEIGHT / (float) WINDOW_WIDTH;
+    glFrustum(-xmax, xmax, -ymax, ymax, znear, zfar);
+}
+
+
 void NBody_draw(NBody* self) {
     // Clear The Screen And The Depth Buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Reset matrix
+    // Reset projection
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    loadPerspective(150.0f, 0.0001f, 100.0f);
+
+    // Reset model view projection
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    double width = 1.0;
-    double height = width * WINDOW_HEIGHT / WINDOW_WIDTH;
-    double depth = 100.0;
-
-    // Set the perspective
-    glOrtho(
-        -width,   // left
-        width,    // right
-        -height,  // bottom
-        height,   // top
-        -depth,   // nearVal
-        depth     // farVal
-    );
-
-    // Zoom out a little
-    float scale = 0.5f;
-    glScalef(scale, scale, scale);
+    // Move to camera
+    Camera_draw(self->camera);
 
     NBody_draw_stars(self);
     Window_update(self->window);
