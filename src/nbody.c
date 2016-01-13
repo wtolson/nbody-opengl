@@ -13,8 +13,8 @@ NBody* NBody_new() {
         goto error;
     }
 
-    self->camera = Camera_new();
-    Camera_translate(self->camera, 0.0f, 0.0f, 10.0f);
+    self->player = Player_new();
+    self->player->position = Vector_init(0.0f, 0.0f, 1.0f);
 
     // Turn on alpha blending for transparency
     glEnable(GL_BLEND);  // Turn Blending On
@@ -64,9 +64,9 @@ void NBody_destroy(NBody* self) {
         self->star_texture = 0;
     }
 
-    if (self->camera != NULL) {
-        Camera_destroy(self->camera);
-        self->camera = NULL;
+    if (self->player != NULL) {
+        Player_destroy(self->player);
+        self->player = NULL;
     }
 
     if (self->window != NULL) {
@@ -103,26 +103,42 @@ void NBody_handle_events(NBody* self) {
     const uint8_t *keystates = SDL_GetKeyboardState(NULL);
 
     if (keystates[SDL_SCANCODE_UP]) {
-        Camera_translate(self->camera, 0.0f, 0.0f, -0.01f);
+        Player_rotate(self->player, 1.0f, 0.0f);
     }
 
     if (keystates[SDL_SCANCODE_DOWN]) {
-        Camera_translate(self->camera, 0.0f, 0.0f, 0.01f);
+        Player_rotate(self->player, -1.0f, 0.0f);
     }
 
     if (keystates[SDL_SCANCODE_RIGHT]) {
-        Camera_translate(self->camera, 0.01f, 0.0f, 0.0f);
+        Player_rotate(self->player, 0.0f, 1.0f);
     }
 
     if (keystates[SDL_SCANCODE_LEFT]) {
-        Camera_translate(self->camera, -0.01f, 0.0f, 0.0f);
+        Player_rotate(self->player, 0.0f, -1.0f);
     }
 }
 
 
 void NBody_tick(NBody* self, uint32_t dt) {
+    self->player->acceleration = Vector_init(0.0f, 0.0f, 0.0f);
     Vector accelerations[NUM_STARS] = {{0.0f, 0.0f, 0.0f}};
 
+    // Update player
+    for (size_t i = 0; i < NUM_STARS; ++i) {
+        Star* star = &self->stars[i];
+
+        Vector delta = Vector_subtract(star->position, self->player->position);
+        float distance = Vector_mag(delta) + 0.00001f;  // Add small amount to avoid collision
+
+        Vector force = Vector_scale(delta, 0.001f / (distance * distance * distance));
+        self->player->acceleration = Vector_add(self->player->acceleration, Vector_scale(force, star->mass));
+    }
+
+    self->player->velocity = Vector_add(self->player->velocity, Vector_scale(self->player->acceleration, 0.001f * dt));
+    self->player->position = Vector_add(self->player->position, Vector_scale(self->player->velocity, 0.001f * dt));
+
+    // Update stars
     for (size_t i = 0; i < NUM_STARS; ++i) {
         Star* star_i = &self->stars[i];
 
@@ -203,8 +219,8 @@ void NBody_draw(NBody* self) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    // Move to camera
-    Camera_draw(self->camera);
+    // Move to camera to player
+    Player_move_camera(self->player);
 
     NBody_draw_stars(self);
     Window_update(self->window);

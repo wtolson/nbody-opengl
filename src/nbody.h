@@ -2,14 +2,14 @@
 
 #include <stdbool.h>
 #include "window.h"
-#include "camera.h"
+#include "player.h"
 #include "star.h"
 
 #define NUM_STARS 512
 
 typedef struct {
     Window* window;
-    Camera* camera;
+    Player* player;
     bool running;
     Star stars[NUM_STARS];
     GLuint star_texture;
