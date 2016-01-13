@@ -95,11 +95,27 @@ void NBody_handle_event(NBody* self, SDL_Event event) {
 
 
 void NBody_handle_events(NBody* self) {
-    Camera_translate(self->camera, 0.0f, 0.0f, -0.01f);
-
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         NBody_handle_event(self, event);
+    }
+
+    const uint8_t *keystates = SDL_GetKeyboardState(NULL);
+
+    if (keystates[SDL_SCANCODE_UP]) {
+        Camera_translate(self->camera, 0.0f, 0.0f, -0.01f);
+    }
+
+    if (keystates[SDL_SCANCODE_DOWN]) {
+        Camera_translate(self->camera, 0.0f, 0.0f, 0.01f);
+    }
+
+    if (keystates[SDL_SCANCODE_RIGHT]) {
+        Camera_translate(self->camera, 0.01f, 0.0f, 0.0f);
+    }
+
+    if (keystates[SDL_SCANCODE_LEFT]) {
+        Camera_translate(self->camera, -0.01f, 0.0f, 0.0f);
     }
 }
 
