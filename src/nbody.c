@@ -14,7 +14,7 @@ NBody* NBody_new() {
     }
 
     self->player = Player_new();
-    self->player->position = Vector_init(0.0f, 0.0f, 1.0f);
+    self->player->position = Vector_init(0.0f, 0.0f, 5.0f);
 
     // Turn on alpha blending for transparency
     glEnable(GL_BLEND);  // Turn Blending On
@@ -201,7 +201,7 @@ void NBody_draw_stars(NBody* self) {
 
 void loadPerspective(float fovyInDegrees, float znear, float zfar) {
     float ymax = znear * tanf(fovyInDegrees * M_PI / 360.0f);
-    float xmax = ymax * (float) WINDOW_HEIGHT / (float) WINDOW_WIDTH;
+    float xmax = ymax * (float) WINDOW_WIDTH / (float) WINDOW_HEIGHT;
     glFrustum(-xmax, xmax, -ymax, ymax, znear, zfar);
 }
 
@@ -213,7 +213,7 @@ void NBody_draw(NBody* self) {
     // Reset projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    loadPerspective(150.0f, 0.0001f, 100.0f);
+    loadPerspective(60.0f, 0.0001f, 100.0f);
 
     // Reset model view projection
     glMatrixMode(GL_MODELVIEW);
