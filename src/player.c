@@ -33,9 +33,20 @@ void Player_rotate(Player *self, float inclination, float azimuth) {
 
 
 void Player_move_camera(Player *self) {
-    glRotatef(self->inclination, 0.0f, 1.0f, 0.0f);
-    glRotatef(self->azimuth, 0.0f, 0.0f, 1.0f);
+    Player_rotate_camera(self);
     glTranslatef(-self->position.x, -self->position.y, -self->position.z);
+}
+
+
+void Player_rotate_camera(Player *self) {
+    glRotatef(self->inclination, 0.0f, 0.0f, 1.0f);
+    glRotatef(self->azimuth, 1.0f, 0.0f, 0.0f);
+}
+
+
+void Player_unrotate_camera(Player *self) {
+    glRotatef(-self->azimuth, 1.0f, 0.0f, 0.0f);
+    glRotatef(-self->inclination, 0.0f, 0.0f, 1.0f);
 }
 
 
