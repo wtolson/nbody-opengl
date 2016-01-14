@@ -175,6 +175,9 @@ void NBody_draw_star(NBody* self, Star star) {
         // Translate to star's center
         glTranslatef(star.position.x, star.position.y, star.position.z);
 
+        // Face stars towards camera
+        Player_unrotate_camera(self->player);
+
         // Scale star by mass
         float scale = 0.08f * sqrtf(star.mass);
         glScalef(scale, scale, scale);
