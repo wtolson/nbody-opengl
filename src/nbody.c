@@ -103,19 +103,19 @@ void NBody_handle_events(NBody* self) {
     const uint8_t *keystates = SDL_GetKeyboardState(NULL);
 
     if (keystates[SDL_SCANCODE_UP]) {
-        Player_rotate(self->player, 1.0f, 0.0f);
-    }
-
-    if (keystates[SDL_SCANCODE_DOWN]) {
-        Player_rotate(self->player, -1.0f, 0.0f);
-    }
-
-    if (keystates[SDL_SCANCODE_RIGHT]) {
         Player_rotate(self->player, 0.0f, 1.0f);
     }
 
-    if (keystates[SDL_SCANCODE_LEFT]) {
+    if (keystates[SDL_SCANCODE_DOWN]) {
         Player_rotate(self->player, 0.0f, -1.0f);
+    }
+
+    if (keystates[SDL_SCANCODE_RIGHT]) {
+        Player_rotate(self->player, 1.0f, 0.0f);
+    }
+
+    if (keystates[SDL_SCANCODE_LEFT]) {
+        Player_rotate(self->player, -1.0f, 0.0f);
     }
 }
 
