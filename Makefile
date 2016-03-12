@@ -1,14 +1,14 @@
 CC=clang
 
-HEADERS = $(wildcard src/*.h)
-SOURCES = $(wildcard src/*.c)
+HEADERS = $(wildcard src/*.h) $(wildcard src/**/*.h)
+SOURCES = $(wildcard src/*.c) $(wildcard src/**/*.c)
 OBJECTS = $(SOURCES:.c=.o)
 
-CFLAGS = -std=gnu99 -march=native -O2
+CFLAGS = -std=gnu99 -march=native -O2 -I src
 CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wstrict-overflow -fno-strict-aliasing
 CFLAGS += -Wno-unused-parameter -Wno-gnu-zero-variadic-macro-arguments
 
-LFLAGS = -lSDL2 -framework OpenGL
+LFLAGS = -lm -lSDL2 -framework OpenGL
 
 
 all: nbody

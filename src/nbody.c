@@ -14,7 +14,7 @@ NBody* NBody_new() {
     }
 
     self->player = Player_new();
-    self->player->position = Vector_init(0.0f, 0.0f, 5.0f);
+    self->player->position = Vector3_init(0.0f, 0.0f, 5.0f);
 
     // Turn on alpha blending for transparency
     glEnable(GL_BLEND);  // Turn Blending On
@@ -121,22 +121,22 @@ void NBody_handle_events(NBody* self) {
 
 
 void NBody_tick(NBody* self, uint32_t dt) {
-    self->player->acceleration = Vector_init(0.0f, 0.0f, 0.0f);
-    Vector accelerations[NUM_STARS] = {{0.0f, 0.0f, 0.0f}};
+    self->player->acceleration = Vector3_init(0.0f, 0.0f, 0.0f);
+    Vector3 accelerations[NUM_STARS] = {{0.0f, 0.0f, 0.0f}};
 
     // Update player
     for (size_t i = 0; i < NUM_STARS; ++i) {
         Star* star = &self->stars[i];
 
-        Vector delta = Vector_subtract(star->position, self->player->position);
-        float distance = Vector_mag(delta) + 0.00001f;  // Add small amount to avoid collision
+        Vector3 delta = Vector3_subtract(star->position, self->player->position);
+        float distance = Vector3_magnitude(delta) + 0.00001f;  // Add small amount to avoid collision
 
-        Vector force = Vector_scale(delta, 0.001f / (distance * distance * distance));
-        self->player->acceleration = Vector_add(self->player->acceleration, Vector_scale(force, star->mass));
+        Vector3 force = Vector3_scale(delta, 0.001f / (distance * distance * distance));
+        self->player->acceleration = Vector3_add(self->player->acceleration, Vector3_scale(force, star->mass));
     }
 
-    self->player->velocity = Vector_add(self->player->velocity, Vector_scale(self->player->acceleration, 0.001f * dt));
-    self->player->position = Vector_add(self->player->position, Vector_scale(self->player->velocity, 0.001f * dt));
+    self->player->velocity = Vector3_add(self->player->velocity, Vector3_scale(self->player->acceleration, 0.001f * dt));
+    self->player->position = Vector3_add(self->player->position, Vector3_scale(self->player->velocity, 0.001f * dt));
 
     // Update stars
     for (size_t i = 0; i < NUM_STARS; ++i) {
@@ -145,16 +145,16 @@ void NBody_tick(NBody* self, uint32_t dt) {
         for (size_t j = i + 1; j < NUM_STARS; ++j) {
             Star* star_j = &self->stars[j];
 
-            Vector delta = Vector_subtract(star_j->position, star_i->position);
-            float distance = Vector_mag(delta) + 0.00001f;  // Add small amount to avoid collision
+            Vector3 delta = Vector3_subtract(star_j->position, star_i->position);
+            float distance = Vector3_magnitude(delta) + 0.00001f;  // Add small amount to avoid collision
 
-            Vector force = Vector_scale(delta, 0.001f / (distance * distance * distance));
-            accelerations[i] = Vector_add(accelerations[i], Vector_scale(force, star_j->mass));
-            accelerations[j] = Vector_add(accelerations[j], Vector_scale(force, -star_i->mass));
+            Vector3 force = Vector3_scale(delta, 0.001f / (distance * distance * distance));
+            accelerations[i] = Vector3_add(accelerations[i], Vector3_scale(force, star_j->mass));
+            accelerations[j] = Vector3_add(accelerations[j], Vector3_scale(force, -star_i->mass));
         }
 
-        star_i->velocity = Vector_add(star_i->velocity, Vector_scale(accelerations[i], 0.001f * dt));
-        star_i->position = Vector_add(star_i->position, Vector_scale(star_i->velocity, 0.001f * dt));
+        star_i->velocity = Vector3_add(star_i->velocity, Vector3_scale(accelerations[i], 0.001f * dt));
+        star_i->position = Vector3_add(star_i->position, Vector3_scale(star_i->velocity, 0.001f * dt));
     }
 }
 

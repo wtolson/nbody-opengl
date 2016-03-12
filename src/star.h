@@ -1,13 +1,13 @@
 #pragma once
 
-#include "vector.h"
+#include "math/vector3.h"
 
 #define STAR_TEXTURE_SIZE 16
 
 typedef struct {
     float mass;
-    Vector position;
-    Vector velocity;
+    Vector3 position;
+    Vector3 velocity;
 } Star;
 
 Star Star_random(void);

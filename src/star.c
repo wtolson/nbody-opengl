@@ -8,8 +8,8 @@ float randomFloat() {
 }
 
 
-Vector randomVector() {
-    return Vector_init(
+Vector3 randomVector3() {
+    return Vector3_init(
         (2.0f * randomFloat()) - 1.0f,
         (2.0f * randomFloat()) - 1.0f,
         (2.0f * randomFloat()) - 1.0f
@@ -20,8 +20,8 @@ Vector randomVector() {
 Star Star_random() {
     Star result = {
         .mass = randomFloat(),
-        .position = randomVector(),
-        .velocity = Vector_scale(randomVector(), 0.2f),
+        .position = randomVector3(),
+        .velocity = Vector3_scale(randomVector3(), 0.2f),
     };
     return result;
 }

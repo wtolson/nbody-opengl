@@ -1,11 +1,11 @@
 #pragma once
 
-#include "vector.h"
+#include "math/vector3.h"
 
 typedef struct {
-    Vector position;
-    Vector velocity;
-    Vector acceleration;
+    Vector3 position;
+    Vector3 velocity;
+    Vector3 acceleration;
 
     float inclination;
     float azimuth;
