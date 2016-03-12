@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vector.h"
+#include <glm/vec3.hpp>
 
 #define STAR_TEXTURE_SIZE 16
 
@@ -10,6 +10,6 @@ public:
     static float* load_texture(void);
 
     float mass;
-    Vector position;
-    Vector velocity;
+    glm::vec3 position;
+    glm::vec3 velocity;
 };

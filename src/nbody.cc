@@ -1,5 +1,7 @@
-#include <stdio.h>
+#include <iostream>
 #include <SDL2/SDL.h>
+#include <glm/geometric.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include "log.h"
 #include "nbody.h"
@@ -8,7 +10,7 @@
 NBody::NBody() {
     this->window = new Window();
     this->player = new Player();
-    this->player->position = Vector_init(0.0f, 0.0f, 5.0f);
+    this->player->position = glm::vec3(0.0f, 0.0f, 5.0f);
 
     // Turn on alpha blending for transparency
     glEnable(GL_BLEND);  // Turn Blending On
@@ -103,22 +105,22 @@ void NBody::handle_events() {
 
 
 void NBody::tick(uint32_t dt) {
-    this->player->acceleration = Vector_init(0.0f, 0.0f, 0.0f);
-    Vector accelerations[NUM_STARS] = {{0.0f, 0.0f, 0.0f}};
+    this->player->acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 accelerations[NUM_STARS];
 
     // Update player
     for (size_t i = 0; i < NUM_STARS; ++i) {
         Star* star = &this->stars[i];
 
-        Vector delta = Vector_subtract(star->position, this->player->position);
-        float distance = Vector_mag(delta) + 0.00001f;  // Add small amount to avoid collision
+        glm::vec3 delta = star->position - this->player->position;
+        float distance =  glm::length(delta) + 0.00001f;  // Add small amount to avoid collision
 
-        Vector force = Vector_scale(delta, 0.001f / (distance * distance * distance));
-        this->player->acceleration = Vector_add(this->player->acceleration, Vector_scale(force, star->mass));
+        glm::vec3 force = 0.001f * delta / (distance * distance * distance);
+        this->player->acceleration += star->mass * force;
     }
 
-    this->player->velocity = Vector_add(this->player->velocity, Vector_scale(this->player->acceleration, 0.001f * dt));
-    this->player->position = Vector_add(this->player->position, Vector_scale(this->player->velocity, 0.001f * dt));
+    this->player->velocity += 0.001f * dt * this->player->acceleration;
+    this->player->position += 0.001f * dt * this->player->velocity;
 
     // Update stars
     for (size_t i = 0; i < NUM_STARS; ++i) {
@@ -127,16 +129,20 @@ void NBody::tick(uint32_t dt) {
         for (size_t j = i + 1; j < NUM_STARS; ++j) {
             Star* star_j = &this->stars[j];
 
-            Vector delta = Vector_subtract(star_j->position, star_i->position);
-            float distance = Vector_mag(delta) + 0.00001f;  // Add small amount to avoid collision
+            glm::vec3 delta =star_j->position - star_i->position;
+            float distance =  glm::length(delta) + 0.00001f;  // Add small amount to avoid collision
 
-            Vector force = Vector_scale(delta, 0.001f / (distance * distance * distance));
-            accelerations[i] = Vector_add(accelerations[i], Vector_scale(force, star_j->mass));
-            accelerations[j] = Vector_add(accelerations[j], Vector_scale(force, -star_i->mass));
+            glm::vec3 force = 0.001f * delta / (distance * distance * distance);
+            accelerations[i] += star_j->mass * force;
+            accelerations[j] -= star_i->mass * force;
         }
 
-        star_i->velocity = Vector_add(star_i->velocity, Vector_scale(accelerations[i], 0.001f * dt));
-        star_i->position = Vector_add(star_i->position, Vector_scale(star_i->velocity, 0.001f * dt));
+        // std::cout << glm::to_string(accelerations[i]) << " ";
+        // std::cout << glm::to_string(star_i->velocity) << " ";
+        // std::cout << glm::to_string(star_i->position) << std::endl;
+
+        star_i->velocity += 0.001f * dt * accelerations[i];
+        star_i->position += 0.001f * dt * star_i->velocity;
     }
 }
 

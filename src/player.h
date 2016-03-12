@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vector.h"
+#include <glm/vec3.hpp>
 
 class Player {
 public:
@@ -9,9 +9,9 @@ public:
     void rotate_camera();
     void unrotate_camera();
 
-    Vector position;
-    Vector velocity;
-    Vector acceleration;
+    glm::vec3 position;
+    glm::vec3 velocity;
+    glm::vec3 acceleration;
 
 private:
 

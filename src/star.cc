@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
+#include <glm/gtc/random.hpp>
 #include "star.h"
 
 
@@ -8,20 +9,11 @@ float randomFloat() {
 }
 
 
-Vector randomVector() {
-    return Vector_init(
-        (2.0f * randomFloat()) - 1.0f,
-        (2.0f * randomFloat()) - 1.0f,
-        (2.0f * randomFloat()) - 1.0f
-    );
-}
-
-
 Star Star::random() {
     Star star;
     star.mass = randomFloat();
-    star.position = randomVector();
-    star.velocity = Vector_scale(randomVector(), 0.2f);
+    star.position = glm::sphericalRand(1.0f);
+    star.velocity = glm::sphericalRand(0.2f);
     return star;
 }
 
