@@ -2,18 +2,19 @@
 
 #include "vector.h"
 
-typedef struct {
+class Player {
+public:
+    void rotate(float inclination, float azimuth);
+    void move_camera();
+    void rotate_camera();
+    void unrotate_camera();
+
     Vector position;
     Vector velocity;
     Vector acceleration;
 
+private:
+
     float inclination;
     float azimuth;
-} Player;
-
-Player* Player_new(void);
-void Player_rotate(Player *self, float inclination, float azimuth);
-void Player_move_camera(Player *self);
-void Player_rotate_camera(Player *self);
-void Player_unrotate_camera(Player *self);
-void Player_destroy(Player *self);
+};

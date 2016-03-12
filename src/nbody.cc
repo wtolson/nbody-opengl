@@ -5,16 +5,10 @@
 #include "nbody.h"
 
 
-NBody* NBody_new() {
-    NBody* self = calloc(1, sizeof(NBody));
-
-    self->window = Window_new();
-    if (self->window == NULL) {
-        goto error;
-    }
-
-    self->player = Player_new();
-    self->player->position = Vector_init(0.0f, 0.0f, 5.0f);
+NBody::NBody() {
+    this->window = new Window();
+    this->player = new Player();
+    this->player->position = Vector_init(0.0f, 0.0f, 5.0f);
 
     // Turn on alpha blending for transparency
     glEnable(GL_BLEND);  // Turn Blending On
@@ -23,10 +17,10 @@ NBody* NBody_new() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     // Load up star texture
-    glGenTextures(1, &self->star_texture);
-    glBindTexture(GL_TEXTURE_2D, self->star_texture);
+    glGenTextures(1, &this->star_texture);
+    glBindTexture(GL_TEXTURE_2D, this->star_texture);
 
-    float* pixels = load_star_texture();
+    float* pixels = Star::load_texture();
     glTexImage2D(
         GL_TEXTURE_2D,      // target
         0,                  // level
@@ -43,50 +37,38 @@ NBody* NBody_new() {
     free(pixels);
 
     for (size_t i = 0; i < NUM_STARS; ++i) {
-        self->stars[i] = Star_random();
+        this->stars[i] = Star::random();
     }
-
-    return self;
-
-error:
-    NBody_destroy(self);
-    return NULL;
 }
 
 
-void NBody_destroy(NBody* self) {
-    if (self == NULL) {
-        return;
+NBody::~NBody() {
+    if (this->star_texture != 0) {
+        glDeleteTextures(1, &this->star_texture);
+        this->star_texture = 0;
     }
 
-    if (self->star_texture != 0) {
-        glDeleteTextures(1, &self->star_texture);
-        self->star_texture = 0;
+    if (this->player != NULL) {
+        delete this->player;
+        this->player = NULL;
     }
 
-    if (self->player != NULL) {
-        Player_destroy(self->player);
-        self->player = NULL;
+    if (this->window != NULL) {
+        delete this->window;
+        this->window = NULL;
     }
-
-    if (self->window != NULL) {
-        Window_destroy(self->window);
-        self->window = NULL;
-    }
-
-    free(self);
 }
 
 
-void NBody_handle_event(NBody* self, SDL_Event event) {
+void NBody::handle_event(SDL_Event event) {
     if(event.type == SDL_QUIT) {
-        self->running = false;
+        this->running = false;
         return;
     }
 
     if (event.type == SDL_KEYDOWN) {
         switch( event.key.keysym.sym ) {
-            case SDLK_ESCAPE: self->running = false;
+            case SDLK_ESCAPE: this->running = false;
             default: break;
         }
         return;
@@ -94,56 +76,56 @@ void NBody_handle_event(NBody* self, SDL_Event event) {
 }
 
 
-void NBody_handle_events(NBody* self) {
+void NBody::handle_events() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
-        NBody_handle_event(self, event);
+        this->handle_event(event);
     }
 
     const uint8_t *keystates = SDL_GetKeyboardState(NULL);
 
     if (keystates[SDL_SCANCODE_UP]) {
-        Player_rotate(self->player, 0.0f, 1.0f);
+        this->player->rotate(0.0f, 1.0f);
     }
 
     if (keystates[SDL_SCANCODE_DOWN]) {
-        Player_rotate(self->player, 0.0f, -1.0f);
+        this->player->rotate(0.0f, -1.0f);
     }
 
     if (keystates[SDL_SCANCODE_RIGHT]) {
-        Player_rotate(self->player, 1.0f, 0.0f);
+        this->player->rotate(1.0f, 0.0f);
     }
 
     if (keystates[SDL_SCANCODE_LEFT]) {
-        Player_rotate(self->player, -1.0f, 0.0f);
+        this->player->rotate(-1.0f, 0.0f);
     }
 }
 
 
-void NBody_tick(NBody* self, uint32_t dt) {
-    self->player->acceleration = Vector_init(0.0f, 0.0f, 0.0f);
+void NBody::tick(uint32_t dt) {
+    this->player->acceleration = Vector_init(0.0f, 0.0f, 0.0f);
     Vector accelerations[NUM_STARS] = {{0.0f, 0.0f, 0.0f}};
 
     // Update player
     for (size_t i = 0; i < NUM_STARS; ++i) {
-        Star* star = &self->stars[i];
+        Star* star = &this->stars[i];
 
-        Vector delta = Vector_subtract(star->position, self->player->position);
+        Vector delta = Vector_subtract(star->position, this->player->position);
         float distance = Vector_mag(delta) + 0.00001f;  // Add small amount to avoid collision
 
         Vector force = Vector_scale(delta, 0.001f / (distance * distance * distance));
-        self->player->acceleration = Vector_add(self->player->acceleration, Vector_scale(force, star->mass));
+        this->player->acceleration = Vector_add(this->player->acceleration, Vector_scale(force, star->mass));
     }
 
-    self->player->velocity = Vector_add(self->player->velocity, Vector_scale(self->player->acceleration, 0.001f * dt));
-    self->player->position = Vector_add(self->player->position, Vector_scale(self->player->velocity, 0.001f * dt));
+    this->player->velocity = Vector_add(this->player->velocity, Vector_scale(this->player->acceleration, 0.001f * dt));
+    this->player->position = Vector_add(this->player->position, Vector_scale(this->player->velocity, 0.001f * dt));
 
     // Update stars
     for (size_t i = 0; i < NUM_STARS; ++i) {
-        Star* star_i = &self->stars[i];
+        Star* star_i = &this->stars[i];
 
         for (size_t j = i + 1; j < NUM_STARS; ++j) {
-            Star* star_j = &self->stars[j];
+            Star* star_j = &this->stars[j];
 
             Vector delta = Vector_subtract(star_j->position, star_i->position);
             float distance = Vector_mag(delta) + 0.00001f;  // Add small amount to avoid collision
@@ -159,7 +141,7 @@ void NBody_tick(NBody* self, uint32_t dt) {
 }
 
 
-void NBody_draw_star(NBody* self, Star star) {
+void NBody::draw_star(Star star) {
     // Set stars color
     if (star.mass < 0.5f) {
         float lum = star.mass + 0.5f;
@@ -176,7 +158,7 @@ void NBody_draw_star(NBody* self, Star star) {
         glTranslatef(star.position.x, star.position.y, star.position.z);
 
         // Face stars towards camera
-        Player_unrotate_camera(self->player);
+        this->player->unrotate_camera();
 
         // Scale star by mass
         float scale = 0.08f * sqrtf(star.mass);
@@ -192,12 +174,12 @@ void NBody_draw_star(NBody* self, Star star) {
 }
 
 
-void NBody_draw_stars(NBody* self) {
+void NBody::draw_stars() {
     // Select Our Texture
-    glBindTexture(GL_TEXTURE_2D, self->star_texture);
+    glBindTexture(GL_TEXTURE_2D, this->star_texture);
 
     for (size_t i = 0; i < NUM_STARS; ++i) {
-        NBody_draw_star(self, self->stars[i]);
+        this->draw_star(this->stars[i]);
     }
 }
 
@@ -209,7 +191,7 @@ void loadPerspective(float fovyInDegrees, float znear, float zfar) {
 }
 
 
-void NBody_draw(NBody* self) {
+void NBody::draw() {
     // Clear The Screen And The Depth Buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -223,29 +205,29 @@ void NBody_draw(NBody* self) {
     glLoadIdentity();
 
     // Move to camera to player
-    Player_move_camera(self->player);
+    this->player->move_camera();
 
-    NBody_draw_stars(self);
-    Window_update(self->window);
+    this->draw_stars();
+    this->window->update();
 }
 
 
-void NBody_step(NBody* self, uint32_t dt) {
-    NBody_handle_events(self);
-    NBody_tick(self, dt);
-    NBody_draw(self);
+void NBody::step(uint32_t dt) {
+    this->handle_events();
+    this->tick(dt);
+    this->draw();
 }
 
 
-void NBody_run(NBody* self) {
+void NBody::run() {
     log_info("Running nbody...");
 
-    self->running = true;
+    this->running = true;
     uint32_t lastTicks = SDL_GetTicks();
 
-    while (self->running) {
+    while (this->running) {
         uint32_t currentTicks = SDL_GetTicks();
-        NBody_step(self, currentTicks - lastTicks);
+        this->step(currentTicks - lastTicks);
 
         lastTicks = currentTicks;
         SDL_Delay(16);

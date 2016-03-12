@@ -4,11 +4,12 @@
 
 #define STAR_TEXTURE_SIZE 16
 
-typedef struct {
+class Star {
+public:
+    static Star random(void);
+    static float* load_texture(void);
+
     float mass;
     Vector position;
     Vector velocity;
-} Star;
-
-Star Star_random(void);
-float* load_star_texture(void);
+};

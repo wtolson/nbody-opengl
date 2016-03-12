@@ -1,12 +1,12 @@
-CC=clang
+CXX=clang++
 
 HEADERS = $(wildcard src/*.h)
-SOURCES = $(wildcard src/*.c)
-OBJECTS = $(SOURCES:.c=.o)
+SOURCES = $(wildcard src/*.cc)
+OBJECTS = $(SOURCES:.cc=.o)
 
-CFLAGS = -std=gnu99 -march=native -O2
-CFLAGS += -Wall -Wextra -pedantic -Wshadow -Wstrict-overflow -fno-strict-aliasing
-CFLAGS += -Wno-unused-parameter -Wno-gnu-zero-variadic-macro-arguments
+CXXFLAGS = -march=native -O2
+# CXXFLAGS += -Wall -Wextra -pedantic -Wshadow -Wstrict-overflow -fno-strict-aliasing
+# CXXFLAGS += -Wno-unused-parameter -Wno-gnu-zero-variadic-macro-arguments
 
 LFLAGS = -lSDL2 -framework OpenGL
 
@@ -18,7 +18,7 @@ debug: LFLAGS += -g
 debug: nbody
 
 nbody: $(OBJECTS)
-	$(CC) $(OBJECTS) $(LFLAGS) -o nbody
+	$(CXX) $(OBJECTS) $(LFLAGS) -o nbody
 
 $(OBJECTS): $(HEADERS)
 

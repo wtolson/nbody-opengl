@@ -17,18 +17,17 @@ Vector randomVector() {
 }
 
 
-Star Star_random() {
-    Star result = {
-        .mass = randomFloat(),
-        .position = randomVector(),
-        .velocity = Vector_scale(randomVector(), 0.2f),
-    };
-    return result;
+Star Star::random() {
+    Star star;
+    star.mass = randomFloat();
+    star.position = randomVector();
+    star.velocity = Vector_scale(randomVector(), 0.2f);
+    return star;
 }
 
 
-float* load_star_texture() {
-    float* texture = calloc(STAR_TEXTURE_SIZE * STAR_TEXTURE_SIZE, sizeof(float));
+float* Star::load_texture() {
+    float* texture = (float*) calloc(STAR_TEXTURE_SIZE * STAR_TEXTURE_SIZE, sizeof(float));
     float radius = ((float) STAR_TEXTURE_SIZE) / 2.0f;
     float sigma_2 = 8.0f;
 
